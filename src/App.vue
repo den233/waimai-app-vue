@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :headerData="headerData"></v-header>
     <ul class="tab border-1px">
       <router-link v-for="(item , index) in classify" :to="{ path: item.key }" tag="li" :key="index" class="tab-item" active-class="active">
         {{ item.value }}
@@ -24,6 +24,7 @@
     },
     data (){
       return {
+        headerData: {},
         classify: [
           {
             value: '商品',
@@ -39,6 +40,24 @@
           }
         ]
       }
+    },
+    methods: {
+      getHeaderData () {
+        this.$http.get('/api/seller').then(
+          (res) => {
+            console.log(res);
+            res = res.data;
+            res.errno === 0 && (this.headerData = res.data);
+            console.log(this.headerData);
+          },
+          (error) => {
+            console.log(error)
+          }
+        )
+      }
+    },
+    created (){
+      this.getHeaderData()
     }
   }
 </script>
