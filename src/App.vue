@@ -45,10 +45,8 @@
       getHeaderData () {
         this.$http.get('/api/seller').then(
           (res) => {
-            console.log(res);
             res = res.data;
             res.errno === 0 && (this.headerData = res.data);
-            console.log(this.headerData);
           },
           (error) => {
             console.log(error)
@@ -85,7 +83,7 @@
     .content
       flex 1
   .classify-trans-enter-active,.classify-trans-leave-active
-    transition opacity 0.5s
+    transition all 0.1s ease-out
   .classify-trans-enter,.classify-trans-leave-to
     transform translateX(-100%)
     opacity 0
