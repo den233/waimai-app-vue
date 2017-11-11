@@ -19,14 +19,14 @@
           </span>
         </div>
       </div>
-      <div v-if="headerData.supports" class="support-count">
+      <div v-if="headerData.supports" class="support-count" @click="showDetail">
         <span class="count">
           {{ headerData.supports.length }}个
         </span>
         <i class="icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="showDetail">
       <span class="bulletin-title"></span><span class="bulletin-text">
         {{ headerData.bulletin }}
       </span>
@@ -35,11 +35,46 @@
     <div class="background">
       <img :src="headerData.avatar" alt="" width="100%" height="100%">
     </div>
+    <transition name="detail-trs">
+      <div class="detail" v-if="detailShow">
+        <div class="detail-wrapper clearMargin">
+          <div class="detail-main">
+            <div class="name">
+              {{ headerData.name }}
+            </div>
+            <!--评分-->
+            <star :size="48" :score="3.6" class="star-wrapper"></star>
+            <div class="title">
+              <div class="text">优惠信息</div>
+            </div>
+            <ul v-if="headerData.supports" class="supports">
+              <li v-for="item in headerData.supports" class="supports-item">
+                <span class="icon" :class="classMap[item.type]"></span>
+                {{ item.description }}
+              </li>
+            </ul>
+            <div class="title">
+              <div class="text">商家公告</div>
+            </div>
+            <div class="bulletin">
+              {{ headerData.bulletin }}
+            </div>
+          </div>
+        </div>
+        <div class="detail-close" @click="closeDetail">
+          <i class="icon-close"></i>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script type="es6">
+  import star from '../star/star'
   export default {
+    components: {
+      star
+    },
     props: {
       headerData: {
         type: Object
@@ -47,7 +82,16 @@
     },
     data (){
       return {
+        detailShow: false,
         classMap: []
+      }
+    },
+    methods: {
+      showDetail (){
+        this.detailShow = true
+      },
+      closeDetail (){
+        this.detailShow = false
       }
     },
     created (){
@@ -59,6 +103,11 @@
 <style lang="stylus" rel="stylesheet/stylus">
   @import '../../common/stylus/mixin.stylus'
 
+  .detail-trs-enter,.detail-trs-leave-to
+    transform translateY(100%)
+    opacity 0
+  .detail-trs-enter-active,.detail-trs-leave-active
+    transition all 0.2s ease-out
   .header
     position relative
     color rgb(255, 255, 255)
@@ -169,4 +218,82 @@
       height 100%
       z-index -1
       filter blur(10px)
+    .detail
+      position fixed
+      top 0
+      left 0
+      z-index 100
+      width 100%
+      height 100%
+      overflow auto
+      background rgba(7, 17, 27, 0.8)
+      .detail-wrapper
+        min-height 100%
+        .detail-main
+          margin-top 64px
+          padding-bottom 64px
+          .name
+            line-height 32px
+            text-align center
+            font-size 16px
+            font-weight 700
+          .star-wrapper
+            margin-top 16px
+          .title
+            display flex
+            align-items center
+            width 80%
+            margin 28px auto 24px auto
+            &:before,&:after
+              flex 1
+              content ''
+              display block
+              border-bottom 1px solid rgba(255, 255, 255, 0.2)
+            .text
+              padding 0 12px
+              font-weight 700
+          .supports
+            width 80%
+            margin 0 auto
+            .supports-item
+              margin-bottom 12px
+              font-size 12px
+              line-height 12px
+              padding 0 12px
+              overflow hidden
+              white-space nowrap
+              text-overflow ellipsis
+            &:last-child
+              margin-bottom 0
+            .icon
+              display inline-block
+              width 16px
+              height 16px
+              vertical-align middle
+              margin-right 6px
+              background-size 16px 16px
+              background-repeat no-repeat
+              &.decrease
+                bg-image('decrease_1')
+              &.discount
+                bg-image('discount_1')
+              &.special
+                bg-image('special_1')
+              &.invoice
+                bg-image('invoice_1')
+          .bulletin
+            width 80%
+            margin 0 auto
+            padding 0 12px
+            font-size 12px
+            line-height 24px
+      .detail-close
+        width 32px
+        height 32px
+        line-height 32px
+        text-align center
+        margin -64px auto 0 auto
+        .icon-close
+          font-size 32px
+          color rgba(255, 255, 255, 0.5)
 </style>
