@@ -13,7 +13,7 @@
           {{ headerData.description }}/{{ headerData.deliveryTime }}分钟送达
         </div>
         <div v-if="headerData.supports" class="support">
-          <span class="icon" :class="classMap[headerData.supports[0].type]"></span>
+          <icon :type="headerData.supports[0].type"></icon>
           <span class="text">
             {{ headerData.supports[0].description }}
           </span>
@@ -49,7 +49,7 @@
             </div>
             <ul v-if="headerData.supports" class="supports">
               <li v-for="item in headerData.supports" class="supports-item">
-                <span class="icon" :class="classMap[item.type]"></span>
+                <icon :type="item.type"></icon>
                 {{ item.description }}
               </li>
             </ul>
@@ -70,9 +70,11 @@
 </template>
 
 <script type="es6">
+  import icon from '../icon/icon'
   import star from '../star/star'
   export default {
     components: {
+      icon,
       star
     },
     props: {
@@ -82,8 +84,7 @@
     },
     data (){
       return {
-        detailShow: false,
-        classMap: []
+        detailShow: false
       }
     },
     methods: {
@@ -93,9 +94,6 @@
       closeDetail (){
         this.detailShow = false
       }
-    },
-    created (){
-      this.classMap = ['decrease', 'discount', 'special', 'invoice']
     }
   }
 </script>
@@ -148,21 +146,11 @@
         .support
           margin-top 10px
           .icon
-            display inline-block
             width 12px
             height 12px
             vertical-align top
             margin-right 4px
             background-size 12px 12px
-            background-repeat no-repeat
-            &.decrease
-              bg-image('decrease_1')
-            &.discount
-              bg-image('discount_1')
-            &.special
-              bg-image('special_1')
-            &.invoice
-              bg-image('invoice_1')
           .text
             line-height 12px
             font-size 10px
@@ -266,21 +254,11 @@
             &:last-child
               margin-bottom 0
             .icon
-              display inline-block
               width 16px
               height 16px
               vertical-align middle
               margin-right 6px
               background-size 16px 16px
-              background-repeat no-repeat
-              &.decrease
-                bg-image('decrease_1')
-              &.discount
-                bg-image('discount_1')
-              &.special
-                bg-image('special_1')
-              &.invoice
-                bg-image('invoice_1')
           .bulletin
             width 80%
             margin 0 auto
