@@ -9,7 +9,7 @@
     <div class="content">
       <transition name="classify-trans" mode="out-in">
         <keep-alive>
-          <router-view></router-view>
+          <router-view :seller="headerData"></router-view>
         </keep-alive>
       </transition>
     </div>
