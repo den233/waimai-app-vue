@@ -1,17 +1,17 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" ref="menu">
       <ul>
-        <li v-for="item in goods" class="menu-item">
-          <div class="content">
-            <span v-if="item.type > 0">x</span>{{ item.name }}
+        <li v-for="(item, index) in goods" class="menu-item border-1px" :class="{'menu-item-active' : index === currentIndex}" @click="selectMenu(index, $event)">
+          <div class="menu-content">
+            <icon v-if="item.type > 0" :type="item.type"></icon>{{ item.name }}
           </div>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" ref="foods">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{ item.name }}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -25,34 +25,104 @@
                   <span class="sale">月售{{ food.sellCount }}份</span><span>好评率{{ food.rating }}%</span>
                 </div>
                 <div class="price">
-                  <span class="nowPrice"><i>￥</i>{{ food.price }}</span><span v-if="food.oldPrice" class="oldPrice"><i>￥</i>{{ food.oldPrice }}</span>
+                  <span class="nowPrice"><i>￥</i>{{ food.price }}</span><span v-if="food.oldPrice" class="oldPrice">￥{{ food.oldPrice }}</span>
                 </div>
+                <add-subtract></add-subtract>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
+    <shop-cart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shop-cart>
   </div>
 </template>
 
 <script type="es6">
+  import BetterScroll from 'better-scroll'
+  import icon from '../icon/icon'
+  import ShopCart from '../shopCart/shopCart'
+  import addSubtract from '../addSubtract/addSubtract'
   export default {
+    props: {
+      seller: {
+        type: Object
+      }
+    },
+    components: {
+      icon,
+      ShopCart,
+      addSubtract
+    },
     data (){
       return {
-        goods: []
+        goods: [],
+        heightList: [],
+        foodList: [],
+        scrollY: 0
+      }
+    },
+    computed: {
+      currentIndex (){
+        for(let i=0; i<this.heightList.length; i++){
+          let currentHeight = this.heightList[i];
+          let nextHeight = this.heightList[i+1];
+          if(!nextHeight || (currentHeight <= this.scrollY && nextHeight > this.scrollY)){
+            console.log(i);
+            return i;
+          }
+        }
+        return 0;
       }
     },
     created (){
       this.$http.get('/api/goods').then(
         (res) => {
-          if(res.data.errno === 0)
+          if(res.data.errno === 0){
             this.goods = res.data.data;
+            this.$nextTick(() => {
+              this._initScroll();
+              this._calculateHeight()
+            })
+          }
         },
         (error) => {
           console.log(error)
         }
-      )
+      );
+    },
+    methods: {
+      _initScroll (){
+        this.menuScroll = new BetterScroll(this.$refs.menu, {
+          click: true
+        });
+        this.foodScroll = new BetterScroll(this.$refs.foods, {
+          probeType: 3,
+          click: true
+        });
+        this.foodScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y))
+          //console.log(this.scrollY)
+        });
+      },
+      _calculateHeight (){
+        this.foodList = this.$refs.foods.getElementsByClassName("food-list-hook");
+        let height = 0;
+        this.heightList.push(height);
+        for(let i=0; i<this.foodList.length; i++){
+          height += this.foodList[i].clientHeight;
+          this.heightList.push(height);
+        }
+        //console.log(this.heightList)
+      },
+      selectMenu (index, event){
+        if(!event._constructed){
+          return
+        }
+        console.log(index);
+        let el = this.foodList[index];
+        this.foodScroll.scrollToElement(el, 200)
+      }
     }
   }
 </script>
@@ -63,29 +133,36 @@
     display flex
     position absolute
     top 174px
-    bottom 44px
+    bottom 48px
     width 100%
     overflow hidden
     .menu-wrapper
       flex 0 0 80px
       background #f3f5f7
+      .menu-item-active
+        background #fff
+        font-weight 700
       .menu-item
         display table
         text-align center
-        vertical-align middle
-        width 56px
+        width 54px
         height 54px
+        padding 0 13px
         font-size 12px
         line-height 14px
         color rgb(7, 17, 27)
-        margin 0 auto
         border-1px(rgba(7, 17, 27, 0.1))
         &:last-child
           border-none()
-        .content
+        .menu-content
           height 100%
           display table-cell
           vertical-align middle
+          .icon
+            width 12px
+            height 12px
+            vertical-align top
+            background-size 12px 12px
     .foods-wrapper
       flex 1
       .food-list
@@ -98,6 +175,7 @@
           border-left 2px solid #d9dde1
           padding-left 14px
         .food-item
+          display flex
           font-size 0
           margin 0 18px
           padding 18px 0
@@ -105,11 +183,10 @@
           &:last-child
             border-none()
           .icon
-            display inline-block
             vertical-align top
           .content
-            display inline-block
             margin-left 10px
+            position relative
             .name
               font-size 14px
               line-height 14px
@@ -118,7 +195,7 @@
               margin-bottom 8px
             .desc
               font-size 10px
-              line-height 10px
+              line-height 12px
               color rgb(147, 153, 159)
             .extra
               font-size 10px
@@ -143,9 +220,5 @@
                 color rgb(147, 153, 159)
                 line-height 24px
                 font-weight 700
-                &>i
-                  font-size 10px
-                  font-style normal
-                  font-weight normal
-
+                text-decoration line-through
 </style>
