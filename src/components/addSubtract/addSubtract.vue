@@ -1,38 +1,52 @@
 <template>
   <div class="addSubtract">
-    <div class="decrease icon-remove_circle_outline" v-show="foods.count>0" @click="subtractCart"></div>
-    <div class="count" v-show="foods.count>0">{{foods.count}}</div>
+    <transition name="decrease">
+      <div class="decrease icon-remove_circle_outline" v-show="food.count>0" @click="subtractCart"></div>
+    </transition>
+    <div class="count" v-show="food.count>0">{{food.count}}</div>
     <div class="increase icon-add_circle" @click="addCart"></div>
   </div>
 </template>
 
 <script type="es6">
+  import Vue from 'vue'
   export default {
     props: {
-      foods: {
-        type: Object,
-        default (){
-          return {
-            count: 0
-          }
-        }
+      food: {
+        type: Object
       }
     },
     computed: {
 
     },
     methods: {
-      addCart (){
-        this.foods.count +=1
+      addCart (e){
+        this.$emit('on-add',e.target);
+        if(!this.food.count){
+          //避开 Vue 不能检测属性被添加的限制。
+          Vue.set(this.food, 'count', 1);
+        }else{
+          this.food.count ++
+        }
       },
       subtractCart (){
-        this.foods.count -=1
+        if(this.food.count)
+          this.food.count --
       }
+    },
+    mounted (){
+      //console.log(this.food)
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+
+  .decrease-enter,.decrease-leave-to
+    transform translate3d(24px,0,0) rotateZ(90deg)
+    opacity 0
+  .decrease-enter-active,.decrease-leave-active
+    transition all 0.2s linear
   .addSubtract
     position absolute
     right 0
