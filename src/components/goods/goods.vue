@@ -27,14 +27,14 @@
                 <div class="price">
                   <span class="nowPrice"><i>￥</i>{{ food.price }}</span><span v-if="food.oldPrice" class="oldPrice">￥{{ food.oldPrice }}</span>
                 </div>
-                <add-subtract></add-subtract>
+                <add-subtract :food="food" @on-add="whichAdd"></add-subtract>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shop-cart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shop-cart>
+    <shop-cart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFood="selectFoods" ref="shopCart"></shop-cart>
   </div>
 </template>
 
@@ -68,14 +68,24 @@
           let currentHeight = this.heightList[i];
           let nextHeight = this.heightList[i+1];
           if(!nextHeight || (currentHeight <= this.scrollY && nextHeight > this.scrollY)){
-            console.log(i);
+            //console.log(i);
             return i;
           }
         }
-        return 0;
+      },
+      selectFoods (){
+        let foods = [];
+        this.goods.forEach((good,k) => {
+          good.foods.forEach((food,k) => {
+            if(food.count){
+              foods.push(food)
+            }
+          })
+        });
+        return foods;
       }
     },
-    created (){
+    mounted (){
       this.$http.get('/api/goods').then(
         (res) => {
           if(res.data.errno === 0){
@@ -100,8 +110,9 @@
           probeType: 3,
           click: true
         });
+        //console.log(this.foodScroll);
         this.foodScroll.on('scroll', (pos) => {
-          this.scrollY = Math.abs(Math.round(pos.y))
+          this.scrollY = Math.abs(Math.ceil(pos.y))+10;
           //console.log(this.scrollY)
         });
       },
@@ -113,16 +124,18 @@
           height += this.foodList[i].clientHeight;
           this.heightList.push(height);
         }
-        //console.log(this.heightList)
       },
       selectMenu (index, event){
         if(!event._constructed){
           return
         }
-        console.log(index);
+        //console.log(index);
         let el = this.foodList[index];
         this.foodScroll.scrollToElement(el, 200)
-      }
+      },
+      whichAdd (target){
+        this.$refs.shopCart.drop(target);
+      },
     }
   }
 </script>
