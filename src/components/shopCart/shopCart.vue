@@ -1,34 +1,65 @@
 <template>
-  <div class="shopCart">
-    <div class="content">
-      <div class="content-left">
-        <div class="logo-wrapper">
-          <div class="logo" :class="{ highlight : totalCount>0 }">
-            <span class="icon-shopping_cart" :class="{ highlight : totalCount>0 }"></span>
+  <div>
+    <div class="shopCart">
+      <div class="content" @click="toggleList">
+        <div class="content-left">
+          <div class="logo-wrapper">
+            <div class="logo" :class="{ highlight : totalCount>0 }">
+              <span class="icon-shopping_cart" :class="{ highlight : totalCount>0 }"></span>
+            </div>
+            <div class="number" v-if="totalCount>0">
+              {{totalCount}}
+            </div>
           </div>
-          <div class="number" v-if="totalCount>0">
-            {{totalCount}}
+          <div class="price" :class="{ highlight : totalCount>0 }">¥{{totalPrice}}</div>
+          <div class="desc">配送费¥{{deliveryPrice}}元</div>
+        </div>
+        <div class="content-right" @click.stop="pay">
+          <div class="pay" :class="[isEnough ?'enough':'not-enough']">{{payDesc}}</div>
+        </div>
+      </div>
+      <div class="ball-container">
+        <transition-group @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" name="drop">
+          <div class="ball" v-for="(ball,index) in balls" v-show="ball.show" :key="index">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition-group>
+      </div>
+      <transition name="cartList">
+        <div class="shopCart-list" v-show="listShow">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="empty">清空</span>
+          </div>
+          <div class="list-content" ref="shopCartList">
+            <ul>
+              <li class="food" v-for="food in selectFood">
+                <span class="name">{{food.name}}</span>
+                <div class="price">
+                  ¥<span class="priceNumber">{{food.price*food.count}}</span>
+                </div>
+                <add-subtract :food="food" @on-add="whichOneAdd"></add-subtract>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="price" :class="{ highlight : totalCount>0 }">¥{{totalPrice}}</div>
-        <div class="desc">配送费¥{{deliveryPrice}}元</div>
-      </div>
-      <div class="content-right">
-        <div class="pay" :class="[isEnough ?'enough':'not-enough']">{{payDesc}}</div>
-      </div>
+      </transition>
     </div>
-    <div class="ball-container">
-      <transition-group @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" name="drop">
-        <div class="ball" v-for="(ball,index) in balls" v-show="ball.show" :key="index">
-          <div class="inner inner-hook"></div>
-        </div>
-      </transition-group>
-    </div>
+    <transition name="listMask">
+      <div class="list-mask" v-show="listShow" @click="closeShopCartList"></div>
+    </transition>
   </div>
+
 </template>
 
 <script type="es6">
+  import addSubtract from '../addSubtract/addSubtract'
+  import BetterScroll from 'better-scroll'
+
   export default {
+    components: {
+      addSubtract
+    },
     props: {
       selectFood: {
         type: Array,
@@ -69,7 +100,8 @@
             show: false
           }
         ],
-        dropBalls: []
+        dropBalls: [],
+        fold: true
       }
     },
     methods: {
@@ -114,6 +146,28 @@
           ball.show = false;
           el.style.display = 'none';
         }
+      },
+      toggleList (){
+        if(!this.totalCount){
+          return;
+        }
+        this.fold = !this.fold;
+      },
+      whichOneAdd (tar){
+        this.drop(tar)
+      },
+      empty (){
+        this.selectFood.forEach((food,k) => {
+          food.count = 0;
+        })
+      },
+      closeShopCartList (){
+        this.fold = !this.fold;
+      },
+      pay (){
+        if(this.totalPrice > this.minPrice){
+          alert("支付"+this.totalPrice+'元')
+        }
       }
     },
     computed: {
@@ -142,13 +196,44 @@
       },
       isEnough (){
         return this.totalPrice >= this.minPrice
+      },
+      listShow (){
+        if(!this.totalCount){
+          this.fold = true;
+          return false;
+        }
+        let show = !this.fold;
+        if(show){
+          this.$nextTick(() => {
+            if(!this.shopCartListScroll){
+              this.shopCartListScroll = new BetterScroll(this.$refs.shopCartList, {
+                click: true
+              });
+            }else{
+              this.shopCartListScroll.refresh();
+            }
+          });
+        }
+        return show;
       }
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/mixin.stylus"
 
+  //列表弹出过渡
+  .cartList-enter,.cartList-leave-to
+    transform translate3d(0,100%,0)
+  .cartList-enter-active,.cartList-leave-active
+    transition all 0.5s
+
+    //背景mask过渡
+  .listMask-enter,.listMask-leave-to
+    opacity 0
+  .listMask-enter-active,.listMask-enter-active
+    transition all 0.5s
   .shopCart
     position fixed
     left 0
@@ -244,4 +329,62 @@
           border-radius 50%
           background rgb(0, 160, 220)
           transition all 0.4s linear
+    .shopCart-list
+      position fixed
+      bottom 48px
+      left 0
+      z-index -1
+      width 100%
+      .list-header
+        box-sizing border-box
+        background #f3f5f7
+        height 40px
+        line-height 40px
+        border-bottom 2px solid rgba(7, 17, 27, 0.1)
+        .title
+          float left
+          margin-left  18px
+          font-size 14px
+          color rgb(7, 17, 27)
+        .empty
+          float right
+          margin-right 18px
+          font-size 12px
+          color rgb(0, 160, 220)
+      .list-content
+        background #fff
+        max-height 265px
+        overflow hidden
+        .food
+          position relative
+          box-sizing border-box
+          height 48px
+          padding 12px 0
+          margin 0 18px
+          border-1px(rgba(7, 17, 27, 0.1))
+          .name
+            font-size 14px
+            color rgb(7, 17, 27)
+            line-height 24px
+          .price
+            position absolute
+            right 90px
+            bottom 12px
+            line-height 24px
+            font-size 10px
+            font-weight normal
+            color rgb(240, 20, 20)
+            .priceNumber
+              font-size 14px
+              font-weight 700
+          .addSubtract
+            bottom 12px
+  .list-mask
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100%
+    z-index 40
+    background rgba(7, 17, 27, 0.6)
 </style>
