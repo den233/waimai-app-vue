@@ -133,7 +133,9 @@
         let el = this.foodList[index];
         this.foodScroll.scrollToElement(el, 200)
       },
+      //子组件addSubtract 传出的 自定义事件处理
       whichAdd (target){
+        //利用 $refs 访问 子组件shopCart drop方法 并将参数传过去
         this.$refs.shopCart.drop(target);
       },
     }
