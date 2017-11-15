@@ -124,7 +124,7 @@
             let rect = ball.el.getBoundingClientRect();
             let x = rect.left - 32;
             let y = -(window.innerHeight - rect.top -22);
-            el.style.display = "";
+            //el.style.display = "";
             el.style.transform = `translate3d(0,${y}px,0)`;
             let inner = el.getElementsByClassName('inner-hook')[0];
             inner.style.transform = `translate3d(${x}px,0,0)`;
@@ -134,7 +134,7 @@
       enter (el){
         let rf = el.offsetHeight;
         this.$nextTick(() => {
-          el.style.display = "";
+          //el.style.display = "";
           el.style.transform = 'translate3d(0,0,0)';
           let inner = el.getElementsByClassName('inner-hook')[0];
           inner.style.transform = 'translate3d(0,0,0)';
