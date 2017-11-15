@@ -14,7 +14,7 @@
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{ item.name }}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li @click="selectFood(food)" v-for="food in item.foods" class="food-item border-1px">
               <div class="icon">
                 <img :src="food.icon" alt="" width="57" height="57">
               </div>
@@ -25,7 +25,7 @@
                   <span class="sale">月售{{ food.sellCount }}份</span><span>好评率{{ food.rating }}%</span>
                 </div>
                 <div class="price">
-                  <span class="nowPrice"><i>￥</i>{{ food.price }}</span><span v-if="food.oldPrice" class="oldPrice">￥{{ food.oldPrice }}</span>
+                  <span class="nowPrice"><i>¥</i>{{ food.price }}</span><span v-if="food.oldPrice" class="oldPrice">¥{{ food.oldPrice }}</span>
                 </div>
                 <add-subtract :food="food" @on-add="whichAdd"></add-subtract>
               </div>
@@ -35,6 +35,7 @@
       </ul>
     </div>
     <shop-cart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFood="selectFoods" ref="shopCart"></shop-cart>
+    <goods-detail :food="selectedFood" @on-add="whichAdd" ref="goodsDetails"></goods-detail>
   </div>
 </template>
 
@@ -43,6 +44,7 @@
   import icon from '../icon/icon'
   import ShopCart from '../shopCart/shopCart'
   import addSubtract from '../addSubtract/addSubtract'
+  import goodsDetail from '../goodsDetail/detail'
   export default {
     props: {
       seller: {
@@ -52,14 +54,16 @@
     components: {
       icon,
       ShopCart,
-      addSubtract
+      addSubtract,
+      goodsDetail
     },
     data (){
       return {
         goods: [],
         heightList: [],
         foodList: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       }
     },
     computed: {
@@ -138,6 +142,10 @@
         //利用 $refs 访问 子组件shopCart drop方法 并将参数传过去
         this.$refs.shopCart.drop(target);
       },
+      selectFood (food){
+        this.selectedFood = food;
+        this.$refs.goodsDetails.show();
+      }
     }
   }
 </script>
@@ -200,6 +208,7 @@
           .icon
             vertical-align top
           .content
+            flex 1
             margin-left 10px
             position relative
             .name
