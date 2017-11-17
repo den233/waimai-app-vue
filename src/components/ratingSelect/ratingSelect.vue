@@ -9,11 +9,6 @@
       <i class="icon-check_circle"></i>
       <span class="text">只看有内容的评论</span>
     </div>
-    <div>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, autem consequatur dicta facilis harum itaque molestias quod! Accusamus debitis et, eveniet ipsum molestias officia saepe temporibus totam unde vel vero.
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque illo maxime quis! Alias consectetur fugiat laudantium officia quia quo! Alias amet aperiam ea eligendi hic molestiae optio tempora totam.
-      lorem
-    </div>
   </div>
 </template>
 
@@ -47,8 +42,8 @@
     },
     data (){
       return {
-        POSITIVE: 1,
-        NEGATIVE: 0,
+        POSITIVE: 0,
+        NEGATIVE: 1,
         ALL: 2
       }
     },
