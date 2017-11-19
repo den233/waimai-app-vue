@@ -24,6 +24,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      // 'components': path.resolve(_dirname, '../src/components')
     }
   },
   module: {
@@ -72,5 +73,13 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  // vue: {
+  //   loaders: utils.cssLoaders({ sourceMap: userCssSourceMap }),
+  //   postcss: [
+  //     require('autoprefixer')({
+  //       browsers: ['last 2 versions', 'Android >= 4.0']
+  //     })
+  //   ]
+  // }
 }
