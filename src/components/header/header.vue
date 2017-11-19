@@ -43,7 +43,7 @@
               {{ headerData.name }}
             </div>
             <!--评分-->
-            <star :size="48" :score="3.6" class="star-wrapper"></star>
+            <star :size="48" :score="headerData.score" class="star-wrapper"></star>
             <div class="title">
               <div class="text">优惠信息</div>
             </div>
@@ -256,7 +256,7 @@
             .icon
               width 16px
               height 16px
-              vertical-align middle
+              vertical-align top
               margin-right 6px
               background-size 16px 16px
           .bulletin
