@@ -131,13 +131,14 @@
           }
         }
       },
-      enter (el){
+      enter (el, done){
         let rf = el.offsetHeight;
         this.$nextTick(() => {
           //el.style.display = "";
           el.style.transform = 'translate3d(0,0,0)';
           let inner = el.getElementsByClassName('inner-hook')[0];
           inner.style.transform = 'translate3d(0,0,0)';
+          el.addEventListener('transitionend', done);
         })
       },
       afterEnter (el){
