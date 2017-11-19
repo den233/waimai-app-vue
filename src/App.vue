@@ -7,11 +7,9 @@
       </router-link>
     </ul>
     <div class="content">
-      <transition name="classify-trans" mode="out-in">
-        <keep-alive>
-          <router-view :seller="headerData"></router-view>
-        </keep-alive>
-      </transition>
+      <keep-alive>
+        <router-view :seller="headerData"></router-view>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -82,9 +80,4 @@
         color rgb(240, 20 ,20) !important
     .content
       flex 1
-  .classify-trans-enter-active,.classify-trans-leave-active
-    transition all 0.1s ease-out
-  .classify-trans-enter,.classify-trans-leave-to
-    transform translateX(-100%)
-    opacity 0
 </style>
