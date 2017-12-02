@@ -86,11 +86,12 @@
             }
           })
         });
+        this.$store.dispatch('settlement', foods);
         return foods;
       }
     },
     mounted (){
-      this.$http.get('/api/goods').then(
+      this.$http.post('//data.leibo.group', {v:'goods'}).then(
         (res) => {
           if(res.data.errno === 0){
             this.goods = res.data.data;
@@ -120,6 +121,7 @@
           //console.log(this.scrollY)
         });
       },
+      //高度区域
       _calculateHeight (){
         this.foodList = this.$refs.foods.getElementsByClassName("food-list-hook");
         let height = 0;
@@ -129,6 +131,7 @@
           this.heightList.push(height);
         }
       },
+      // 左侧菜单点击右侧联动
       selectMenu (index, event){
         if(!event._constructed){
           return
