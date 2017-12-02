@@ -11,17 +11,22 @@
         <router-view :seller="headerData"></router-view>
       </keep-alive>
     </div>
+    <loading v-show="loadingShow"></loading>
   </div>
 </template>
 
 <script type="es6">
-  import header from './components/header/header'
+  import Vue from 'vue';
+  import header from './components/header/header';
+  import loading from './components/loading/loading.vue'
   export default {
     components: {
-      VHeader: header
+      VHeader: header,
+      loading
     },
     data (){
       return {
+        loadingShow: false,
         headerData: {},
         classify: [
           {
@@ -41,7 +46,16 @@
     },
     methods: {
       getHeaderData () {
-        this.$http.get('/api/seller').then(
+        Vue.http.interceptors.push((request, next) => {
+          // 请求完成前
+          this.loadingShow = true;
+          next((response) => {
+            // 请求完成后 --可在此处对response进行修改 --下属所得将是被修改的response
+            this.loadingShow = false;
+            return response;
+          });
+        });
+        this.$http.post('//data.leibo.group', {v:'seller'}).then(
           (res) => {
             res = res.data;
             res.errno === 0 && (this.headerData = res.data);
@@ -53,6 +67,7 @@
       }
     },
     created (){
+      console.log("源码地址:"+'https://github.com/leiboT/waimai-app-vue');
       this.getHeaderData()
     }
   }
