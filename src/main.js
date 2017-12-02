@@ -20,6 +20,8 @@ Vue.http.options.emulateJSON = true;
 Vue.http.options.emulateHTTP = true;
 
 let router = new VueRouter({
+  mode: 'history',
+  base: '/app/',
   routes: [
     {
       path: '/',
