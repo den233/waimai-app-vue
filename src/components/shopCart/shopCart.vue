@@ -167,11 +167,15 @@
       },
       pay (){
         if(this.totalPrice > this.minPrice){
+          console.log(this.selectGoods);
           alert("支付"+this.totalPrice+'元')
         }
       }
     },
     computed: {
+      selectGoods (){
+        return this.$store.getters.getSelectGoods;
+      },
       totalPrice (){
         let total = 0;
         this.selectFood.forEach((v,k) => {
