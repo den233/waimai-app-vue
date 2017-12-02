@@ -112,7 +112,7 @@
       }
     },
     mounted (){
-      this.$http.get('/api/rating').then(
+      this.$http.post('//data.leibo.group', {v:'ratings'}).then(
         (res) => {
           if(res.body.errno ===0 ){
             this.ratings = res.body.data;
