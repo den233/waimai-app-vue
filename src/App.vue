@@ -47,7 +47,7 @@
     methods: {
       getHeaderData () {
         Vue.http.interceptors.push((request, next) => {
-          // 请求完成前
+          // 发送请求前
           this.loadingShow = true;
           next((response) => {
             // 请求完成后 --可在此处对response进行修改 --下属所得将是被修改的response
