@@ -21,7 +21,7 @@ Vue.http.options.emulateHTTP = true;
 
 let router = new VueRouter({
   mode: 'history',
-  base: '/app/',
+  base: '/app/',  //将要部署到的服务器文件夹路径
   routes: [
     {
       path: '/',
