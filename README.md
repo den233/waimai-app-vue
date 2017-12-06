@@ -15,7 +15,7 @@
     ![](http://leibo.group/image/app/ratings.png)
     * 商家信息
     ![](http://leibo.group/image/app/seller.png)
-    * 商家信息弹层
+    * 商家信息弹层  
     ![](http://leibo.group/image/app/dialog.png)
 
 ## 有问题
