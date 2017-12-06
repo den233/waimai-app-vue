@@ -1,8 +1,8 @@
-##项目名称
+## 项目名称
 * vue2.0单页应用
 * Web App（外送--商家页）
 
-##项目简介
+## 项目简介
 * vue-cli  vue init webpack 搭建脚手架
 * vue-resource 做为异步请求插件
 * vue-router 做为前端路由
@@ -10,10 +10,15 @@
 
 * [商家页](http://leibo.group/app)
     * 商家商品
+    ![](http://leibo.group/image/app/goods.png)
     * 商家评价
+    ![](http://leibo.group/image/app/ratings.png)
     * 商家信息
+    ![](http://leibo.group/image/app/seller.png)
+    * 商家信息弹层
+    ![](http://leibo.group/image/app/dialog.png)
 
-##有问题
+## 有问题
 可以用以下联系方式跟我交流
 
 * 邮件(leibo_369@163.com)
