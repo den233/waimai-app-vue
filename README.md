@@ -9,14 +9,10 @@
 * vuex 做为状态管理插件
 
 * [商家页](http://leibo.group/app)
-    * 商家商品
-    ![](http://leibo.group/image/app/goods.png)
-    * 商家评价
-    ![](http://leibo.group/image/app/ratings.png)
-    * 商家信息
-    ![](http://leibo.group/image/app/seller.png)
-    * 商家信息弹层  
-    ![](http://leibo.group/image/app/dialog.png)
+    * 商家商品  ![](http://leibo.group/image/app/goods.png)
+    * 商家评价  ![](http://leibo.group/image/app/ratings.png)
+    * 商家信息  ![](http://leibo.group/image/app/seller.png)
+    * 商家信息弹层  ![](http://leibo.group/image/app/dialog.png)
 
 ## 有问题
 可以用以下联系方式跟我交流
